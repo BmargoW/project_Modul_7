@@ -68,3 +68,4 @@ class LessonUpdate(generics.UpdateAPIView):
 
 class LessonDestroy(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
+
