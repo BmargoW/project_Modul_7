@@ -1,9 +1,9 @@
-from django.shortcuts import get_object_or_404
+
 
 from teaching.models import Course, Lesson
 from teaching.serializers import CourseSerializer, LessonSerializer
 from rest_framework import viewsets, generics
-from rest_framework.response import Response
+
 
 
 
