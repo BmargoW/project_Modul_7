@@ -1,6 +1,8 @@
+from rest_framework.permissions import IsAuthenticated
 
 
 from teaching.models import Course, Lesson
+from teaching.permissions import ModeratorPerm, OwnerPerm
 from teaching.serializers import CourseSerializer, LessonSerializer
 from rest_framework import viewsets, generics
 
@@ -13,6 +15,23 @@ class CourseViewSet(viewsets.ModelViewSet):
     """
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    #permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        new_lesson = serializer.save()
+        new_lesson.owner = self.request.user
+        new_lesson.save()
+
+    def get_permissions(self):
+        if self.action == 'update':
+            self.permission_classes = [OwnerPerm, ModeratorPerm]
+        elif self.action == 'list':
+            self.permission_classes = [OwnerPerm, ModeratorPerm]
+        elif self.action == 'retrieve':
+            self.permission_classes = [ModeratorPerm]
+        elif self.action == 'destroy':
+            self.permission_classes = [OwnerPerm]
+        return [permission() for permission in self.permission_classes]
 
     # def create(self, request):
     #     serializer = CourseSerializer(data=request.data)
@@ -53,21 +72,35 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 class LessonCreate(generics.CreateAPIView):
     serializer_class = LessonSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        new_lesson = serializer.save()
+        new_lesson.owner = self.request.user
+        new_lesson.save()
 
 
 class LessonList(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes =  [OwnerPerm, ~ModeratorPerm]
 
 
 class LessonRetrieve(generics.RetrieveAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = [ModeratorPerm]
 
 class LessonUpdate(generics.UpdateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = [OwnerPerm, ~ModeratorPerm]
 
 class LessonDestroy(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
+    permission_classes = [OwnerPerm]
+
+
+
+
 
