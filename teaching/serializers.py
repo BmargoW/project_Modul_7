@@ -1,13 +1,22 @@
+import re
+
 from rest_framework import serializers
 from .models import Course, Lesson
+from .validators import link_validator
 
-
-
+YOUTUBE_REGEX = re.compile(
+    r"^https?://(?:www\.)?(?:youtube\.com|youtu\.?be)/",
+    re.IGNORECASE
+)
 
 class LessonSerializer(serializers.ModelSerializer):
+    video_url = serializers.URLField(validators=[link_validator])
+
     class Meta:
         model = Lesson
         fields = "__all__"
+
+
 
 
 class CourseSerializer(serializers.ModelSerializer):
