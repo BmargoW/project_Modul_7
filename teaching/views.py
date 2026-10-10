@@ -1,7 +1,9 @@
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-
-from teaching.models import Course, Lesson
+from teaching.models import Course, Lesson, Subscription
 from teaching.permissions import ModeratorPerm, OwnerPerm
 from teaching.serializers import CourseSerializer, LessonSerializer
 from rest_framework import viewsets, generics
@@ -102,5 +104,28 @@ class LessonDestroy(generics.DestroyAPIView):
 
 
 
+class CourseSubscriptionView(APIView):
 
+    def post(self, request, course_id):
+        course = get_object_or_404(Course, pk=course_id)
+        user = request.user
+
+        # Если уже подписан — можно вернуть 200 с сообщением или 409 Conflict
+        if Subscription.objects.filter(user=user, course=course).exists():
+            return Response(
+                {'detail': 'Вы уже подписаны на этот курс'})
+
+        Subscription.objects.create(user=user, course=course)
+        return Response({'detail': 'Подписка оформлена'} )
+
+    def delete(self, request, course_id):
+        course = get_object_or_404(Course, pk=course_id)
+        user = request.user
+        subscription = Subscription.objects.filter(user=user, course=course).first()
+
+        if not subscription:
+            return Response({'detail': 'Вы не подписаны на этот курс'})
+
+        subscription.delete()
+        return Response({'detail': 'Отписка выполнена'})
 
