@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from teaching.models import Course, Lesson, Subscription
+from teaching.pagination import MyPagination
 from teaching.permissions import ModeratorPerm, OwnerPerm
 from teaching.serializers import CourseSerializer, LessonSerializer
 from rest_framework import viewsets, generics
@@ -17,6 +18,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     """
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    pagination_class = MyPagination
     #permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
@@ -26,11 +28,11 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == 'update':
-            self.permission_classes = [OwnerPerm, ModeratorPerm]
+            self.permission_classes = [OwnerPerm, IsAuthenticated]
         elif self.action == 'list':
-            self.permission_classes = [OwnerPerm, ModeratorPerm]
+            self.permission_classes = [IsAuthenticated]
         elif self.action == 'retrieve':
-            self.permission_classes = [ModeratorPerm]
+            self.permission_classes = [OwnerPerm, ModeratorPerm]
         elif self.action == 'destroy':
             self.permission_classes = [OwnerPerm]
         return [permission() for permission in self.permission_classes]
@@ -76,6 +78,7 @@ class LessonCreate(generics.CreateAPIView):
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated]
 
+
     def perform_create(self, serializer):
         new_lesson = serializer.save()
         new_lesson.owner = self.request.user
@@ -85,7 +88,8 @@ class LessonCreate(generics.CreateAPIView):
 class LessonList(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes =  [OwnerPerm, ~ModeratorPerm]
+    permission_classes =  [IsAuthenticated]
+    pagination_class = MyPagination
 
 
 class LessonRetrieve(generics.RetrieveAPIView):
