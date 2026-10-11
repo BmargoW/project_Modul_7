@@ -36,12 +36,14 @@ class Lesson(models.Model):
     )
     course = models.ForeignKey(
         Course,
+        related_name='lessons',
         on_delete=models.CASCADE,
         verbose_name="Курс",
     )
     video_url = models.URLField(max_length=2000, blank=True, null=True)
     owner = models.ForeignKey(
         CustomUser,
+
         null=True,
         blank=True,
         on_delete=models.CASCADE,

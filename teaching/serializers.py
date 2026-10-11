@@ -20,9 +20,24 @@ class LessonSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    lesson = LessonSerializer(source="lessons", many= True)
+    # Назови переменную lessons — тогда и в JSON будет lessons
+    lessons = LessonSerializer(many=True)
     lesson_count = serializers.SerializerMethodField()
     is_subscribed = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Course
+        fields = ['id', 'title', 'preview', 'description', 'lessons', 'lesson_count', 'is_subscribed']
+
+    def create(self, validated_data):
+        lessons_data = validated_data.pop("lessons", [])
+        course = Course.objects.create(**validated_data)
+
+        for lesson_data in lessons_data:
+            lesson_data.pop("course", None)
+            Lesson.objects.create(course=course, **lesson_data)
+
+        return course
 
     def get_lesson_count(self,  course):
         return course.lessons.count()
@@ -33,6 +48,4 @@ class CourseSerializer(serializers.ModelSerializer):
             return False
         return obj.subscribers.filter(user=request.user).exists()
 
-    class Meta:
-        model = Course
-        fields = ['title', 'preview', 'description', 'lesson_count', 'lesson', 'is_subscribed' ]
+

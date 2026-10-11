@@ -26,13 +26,14 @@ class CourseViewSet(viewsets.ModelViewSet):
         new_lesson.owner = self.request.user
         new_lesson.save()
 
+
     def get_permissions(self):
         if self.action == 'update':
-            self.permission_classes = [OwnerPerm, IsAuthenticated]
+            self.permission_classes = [OwnerPerm | ModeratorPerm]
         elif self.action == 'list':
             self.permission_classes = [IsAuthenticated]
         elif self.action == 'retrieve':
-            self.permission_classes = [OwnerPerm, ModeratorPerm]
+            self.permission_classes = [OwnerPerm | ModeratorPerm]
         elif self.action == 'destroy':
             self.permission_classes = [OwnerPerm]
         return [permission() for permission in self.permission_classes]
@@ -95,12 +96,12 @@ class LessonList(generics.ListAPIView):
 class LessonRetrieve(generics.RetrieveAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [ModeratorPerm]
+    permission_classes = [OwnerPerm|ModeratorPerm]
 
 class LessonUpdate(generics.UpdateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [OwnerPerm, ~ModeratorPerm]
+    permission_classes = [OwnerPerm]
 
 class LessonDestroy(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
