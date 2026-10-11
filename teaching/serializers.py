@@ -16,11 +16,7 @@ class LessonSerializer(serializers.ModelSerializer):
         model = Lesson
         fields = "__all__"
 
-
-
-
 class CourseSerializer(serializers.ModelSerializer):
-    # Назови переменную lessons — тогда и в JSON будет lessons
     lessons = LessonSerializer(many=True)
     lesson_count = serializers.SerializerMethodField()
     is_subscribed = serializers.SerializerMethodField()
