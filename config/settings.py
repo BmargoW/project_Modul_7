@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "teaching",
     "django_filters",
     "rest_framework_simplejwt",
+    'drf_spectacular',
 
     "rest_framework"
 ]
@@ -58,8 +59,8 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 SIMPLE_JWT = {
@@ -147,11 +148,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = "static/"
-# STATICFILES_DIRS = [
-#     # Здесь вы можете добавить пути к вашим статическим файлам,
-#     # если они располагаются вне приложений
-#     BASE_DIR / 'static'
-# ]
+STATICFILES_DIRS = [
+    # Здесь вы можете добавить пути к вашим статическим файлам,
+    # если они располагаются вне приложений
+    BASE_DIR / 'static'
+]
 
 
 MEDIA_URL = '/media/'
@@ -168,3 +169,5 @@ MAILERS = {
 }
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")

@@ -52,16 +52,17 @@ class CustomUser(AbstractBaseUser):
         return self.email
 
 from teaching.models import Course, Lesson
+
 class Payments(models.Model):
     STATUS_CHOICES = [
         ("cash", "наличные"),
         ("remittance", "денежный перевод"),
     ]
 
-    course = models.ForeignKey(Course, on_delete=models.CASCADE,null=True, blank=True )
+    course = models.ForeignKey(Course, on_delete=models.CASCADE,null=True, blank=True)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE,null=True, blank=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True, blank=True)
-    datetime_payments = models.DateTimeField(auto_now=False, verbose_name="дата платежа")
+    datetime_payments = models.DateTimeField(auto_now=True, verbose_name="дата платежа")
     payment_amount =  models.DecimalField(max_digits=10, decimal_places=2, verbose_name="сумма платежа")
     payment_method = models.CharField(
         max_length=20,
@@ -69,6 +70,8 @@ class Payments(models.Model):
         default="cash",
         verbose_name="способ платежа",
     )
+    sessions_id = models.CharField(max_length=255,null=True, blank=True, verbose_name="id сессии")
+    link = models.URLField(max_length=1000, blank=True, null=True, verbose_name="сслка на оплату")
 
     def __str__(self):
         return f"{self.course if self.course else self.lesson} - {self.payment_amount}"

@@ -108,7 +108,6 @@ class LessonDestroy(generics.DestroyAPIView):
     permission_classes = [OwnerPerm]
 
 
-
 class CourseSubscriptionView(APIView):
 
     def post(self, request, course_id):
@@ -134,3 +133,13 @@ class CourseSubscriptionView(APIView):
         subscription.delete()
         return Response({'detail': 'Отписка выполнена'})
 
+# def contacts(request):
+#     if request.method == "POST":
+#         amount = request.POST.get("amount")
+#         url =  # адрес. по которому мы берем сессию перевода
+#         response = # ответ из сервиса
+#         data = response.json()
+#         a = # дале генерирует ссылку, возможно из data
+#         b = # поулчаем ссылку id сессиий
+#         element = MyModel(amount = amount, a =a, b =b)
+#     return HttpResponse (f"Спасибо за внимание!")

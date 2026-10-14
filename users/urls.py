@@ -16,4 +16,5 @@ urlpatterns = [ path("payments/create/", PaymentsCreate.as_view(), name = "p-cre
                 path("user/destroy/<int:pk>/", UserDestroy.as_view(), name = "u-destroy"),
                 # path("lesson/update/<int:pk>/", LessonUpdate.as_view(), name = "l-update"),
                 # path("lesson/delete/<int:pk>/", LessonDestroy.as_view(), name = "l-delete"),
+
     ]
