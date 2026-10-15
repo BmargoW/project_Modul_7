@@ -1,3 +1,4 @@
+
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -10,6 +11,7 @@ from teaching.serializers import CourseSerializer, LessonSerializer
 from rest_framework import viewsets, generics
 
 
+from teaching.tasks import notify_subscriber
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -38,41 +40,12 @@ class CourseViewSet(viewsets.ModelViewSet):
             self.permission_classes = [OwnerPerm]
         return [permission() for permission in self.permission_classes]
 
-    # def create(self, request):
-    #     serializer = CourseSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=201)
-    #     return Response(serializer.errors, status=400)
-    #
-    #
-    # def list(self, request):
-    #     # Метод для вывода списка пользователей с определением выборки из базы и указанием сериализатора
-    #     queryset = Course.objects.all()
-    #     serializer = CourseSerializer(queryset, many=True)
-    #     return Response(serializer.data)
-    #
-    #
-    #
-    # def retrieve(self, request, pk=None):
-    #     # Метод для вывода информации по пользователю с определением выборки из базы и указанием сериализатора
-    #     queryset = Course.objects.all()
-    #     course = get_object_or_404(queryset, pk=pk)
-    #     serializer = CourseSerializer(course)
-    #     return Response(serializer.data)
-    #
-    # def update(self, request, pk=None):
-    #     course = get_object_or_404(Course, pk=pk)
-    #     serializer = CourseSerializer(course, data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data)
-    #     return Response(serializer.errors, status=400)
-    #
-    # def destroy(self, request, pk=None):
-    #     course = get_object_or_404(Course, pk=pk)
-    #     course.delete()
-    #     return Response(status=204)
+    def perform_update(self, serializer):
+        course = serializer.instance
+        updated_course = serializer.save()
+        notify_subscriber.delay(updated_course.id)
+
+        return super().perform_update(serializer)
 
 
 class LessonCreate(generics.CreateAPIView):
@@ -133,13 +106,4 @@ class CourseSubscriptionView(APIView):
         subscription.delete()
         return Response({'detail': 'Отписка выполнена'})
 
-# def contacts(request):
-#     if request.method == "POST":
-#         amount = request.POST.get("amount")
-#         url =  # адрес. по которому мы берем сессию перевода
-#         response = # ответ из сервиса
-#         data = response.json()
-#         a = # дале генерирует ссылку, возможно из data
-#         b = # поулчаем ссылку id сессиий
-#         element = MyModel(amount = amount, a =a, b =b)
-#     return HttpResponse (f"Спасибо за внимание!")
+
