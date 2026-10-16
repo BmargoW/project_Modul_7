@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "django_filters",
     "rest_framework_simplejwt",
     'drf_spectacular',
+    'django_celery_beat',
 
     "rest_framework"
 ]
@@ -176,3 +177,14 @@ CELERY_BROKER_URL = 'redis://localhost:6379' # Например, Redis, кото
 
 # URL-адрес брокера результатов, также Redis
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'deactivate-users': {
+        'task': 'users.tasks.deactivate_users',
+        'schedule': crontab(hour=3, minute=0),
+    },
+}
+
