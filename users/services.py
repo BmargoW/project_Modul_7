@@ -11,10 +11,6 @@ def create_stripe_product(name):
     """Создаём продукт в Stripe"""
     return stripe.Product.create(name=name)
 
-# def convert_rub_to_dollars(amount_rub):
-#
-#     rate = c.get_rate('RUB', 'USD')
-#     return amount_rub * rate
 
 def create_stripe_price(product_id, amount_rub):
     """
