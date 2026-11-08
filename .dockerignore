@@ -1,0 +1,42 @@
+venv/
+.venv/
+env/
+ENV/
+
+# --- Git и история проекта ---
+.git/
+.gitignore
+
+# --- Кэш и артефакты Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# --- Покрытие кода и тесты ---
+htmlcov/
+.coverage
+coverage.xml
+
+# --- Секреты и локальные конфиги ---
+.env
+.env.*
+secrets/
+*.pem
+*.key
+*.crt
+
+# --- IDE и ОС ---
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# --- Базы данных и логи (если они создаются локально) ---
+*.sqlite3
+*.log
+*.dump
