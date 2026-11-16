@@ -8,7 +8,7 @@ app_name = "teaching"
 
 
 router = DefaultRouter()
-router.register(r'course', CourseViewSet, basename='user')
+router.register(r'course', CourseViewSet, basename='course')
 urlpatterns = [ path("lesson/create/", LessonCreate.as_view(), name = "l-create"),
                 path("lesson/list/", LessonList.as_view(), name = "l-list"),
                 path("lesson/retrieve/<int:pk>/", LessonRetrieve.as_view(), name = "l-retrieve"),
