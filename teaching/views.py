@@ -1,10 +1,7 @@
 
-
 from teaching.models import Course, Lesson
 from teaching.serializers import CourseSerializer, LessonSerializer
 from rest_framework import viewsets, generics
-
-
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -34,4 +31,3 @@ class LessonUpdate(generics.UpdateAPIView):
 
 class LessonDestroy(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
-
